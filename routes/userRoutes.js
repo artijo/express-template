@@ -9,11 +9,11 @@ import {
 const router = express.Router();
 
 // Public routes
-// router.get('/', userController.getAllUsers);
-// router.get('/:id', userController.getUserById);
+router.get('/', userController.getAllUsers);
+router.get('/:id', userController.getUserById);
 
 // Protected routes (require authentication)
-router.post('/', createUserValidation, userController.createUser);
+router.post('/', authenticateToken, createUserValidation, userController.createUser);
 router.put(
   '/:id',
   authenticateToken,

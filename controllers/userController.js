@@ -1,20 +1,15 @@
 import userService from '../services/userService.js';
 import { validationResult } from 'express-validator';
+import responseUtils from '../utils/response.js';
 
 class UserController {
   // Get all users
   async getAllUsers(req, res) {
     try {
       const users = await userService.getAllUsers();
-      res.json({
-        success: true,
-        data: users
-      });
+      responseUtils.success(res, users, 'Users retrieved successfully');
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      responseUtils.internalError(res, error.message);
     }
   }
 
@@ -25,21 +20,12 @@ class UserController {
       const user = await userService.getUserById(parseInt(id));
       
       if (!user) {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
+        return responseUtils.notFound(res, 'User not found');
       }
 
-      res.json({
-        success: true,
-        data: user
-      });
+      responseUtils.success(res, user, 'User retrieved successfully');
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      responseUtils.internalError(res, error.message);
     }
   }
 
@@ -49,33 +35,19 @@ class UserController {
       // Check validation errors
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Validation failed',
-          errors: errors.array()
-        });
+        return responseUtils.validationError(res, errors.array());
       }
 
       const userData = req.body;
       const newUser = await userService.createUser(userData);
       
-      res.status(201).json({
-        success: true,
-        message: 'User created successfully',
-        data: newUser
-      });
+      responseUtils.created(res, newUser, 'User created successfully');
     } catch (error) {
       if (error.code === 'P2002') {
-        return res.status(409).json({
-          success: false,
-          message: 'Email already exists'
-        });
+        return responseUtils.conflict(res, 'Email already exists');
       }
       
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      responseUtils.internalError(res, error.message);
     }
   }
 
@@ -84,11 +56,7 @@ class UserController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Validation failed',
-          errors: errors.array()
-        });
+        return responseUtils.validationError(res, errors.array());
       }
 
       const { id } = req.params;
@@ -96,23 +64,13 @@ class UserController {
       
       const updatedUser = await userService.updateUser(parseInt(id), updateData);
       
-      res.json({
-        success: true,
-        message: 'User updated successfully',
-        data: updatedUser
-      });
+      responseUtils.success(res, updatedUser, 'User updated successfully');
     } catch (error) {
       if (error.code === 'P2025') {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
+        return responseUtils.notFound(res, 'User not found');
       }
       
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      responseUtils.internalError(res, error.message);
     }
   }
 
@@ -122,22 +80,13 @@ class UserController {
       const { id } = req.params;
       await userService.deleteUser(parseInt(id));
       
-      res.json({
-        success: true,
-        message: 'User deleted successfully'
-      });
+      responseUtils.success(res, null, 'User deleted successfully');
     } catch (error) {
       if (error.code === 'P2025') {
-        return res.status(404).json({
-          success: false,
-          message: 'User not found'
-        });
+        return responseUtils.notFound(res, 'User not found');
       }
       
-      res.status(500).json({
-        success: false,
-        message: error.message
-      });
+      responseUtils.internalError(res, error.message);
     }
   }
 }

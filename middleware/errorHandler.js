@@ -1,3 +1,5 @@
+import responseUtils from '../utils/response.js';
+
 const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
@@ -7,53 +9,44 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
-    const message = 'Resource not found';
-    error = { message, statusCode: 404 };
+    return responseUtils.notFound(res, 'Resource not found');
   }
 
   // Mongoose duplicate key
   if (err.code === 11000) {
-    const message = 'Duplicate field value entered';
-    error = { message, statusCode: 400 };
+    return responseUtils.badRequest(res, 'Duplicate field value entered');
   }
 
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const message = Object.values(err.errors).map(val => val.message);
-    error = { message, statusCode: 400 };
+    return responseUtils.badRequest(res, message.join(', '));
   }
 
   // Prisma errors
   if (err.code === 'P2002') {
-    const message = 'Duplicate field value entered';
-    error = { message, statusCode: 409 };
+    return responseUtils.conflict(res, 'Duplicate field value entered');
   }
 
   if (err.code === 'P2025') {
-    const message = 'Record not found';
-    error = { message, statusCode: 404 };
+    return responseUtils.notFound(res, 'Record not found');
   }
 
   if (err.code === 'P2014') {
-    const message = 'Invalid ID provided';
-    error = { message, statusCode: 400 };
+    return responseUtils.badRequest(res, 'Invalid ID provided');
   }
 
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
-    const message = 'Invalid token';
-    error = { message, statusCode: 401 };
+    return responseUtils.unauthorized(res, 'Invalid token');
   }
 
   if (err.name === 'TokenExpiredError') {
-    const message = 'Token expired';
-    error = { message, statusCode: 401 };
+    return responseUtils.unauthorized(res, 'Token expired');
   }
 
-  res.status(error.statusCode || 500).json({
-    success: false,
-    error: error.message || 'Server Error'
-  });
+  // Default error response
+  return responseUtils.internalError(res, error.message || 'Server Error');
 };
 
 export default errorHandler;

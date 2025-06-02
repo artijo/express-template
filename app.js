@@ -13,6 +13,9 @@ import errorHandler from './middleware/errorHandler.js';
 // Import constants
 import { ENV, API_ENDPOINTS, HTTP_STATUS } from './utils/constants.js';
 
+// Import response utilities
+import responseUtils from './utils/response.js';
+
 dotenv.config();
 
 const app = express();
@@ -25,8 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Basic routes
 app.get('/', (req, res) => {
-  res.status(HTTP_STATUS.OK).json({ 
-    message: 'Express API is running!',
+  const data = {
     version: '1.0.0',
     environment: ENV.NODE_ENV,
     endpoints: {
@@ -34,18 +36,19 @@ app.get('/', (req, res) => {
       users: API_ENDPOINTS.USERS.BASE,
       health: API_ENDPOINTS.SYSTEM.HEALTH
     }
-  });
+  };
+  responseUtils.success(res, data, 'Express API is running!');
 });
 
 app.get('/health', (req, res) => {
-  res.status(HTTP_STATUS.OK).json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
+  const healthData = {
+    status: 'OK',
     uptime: process.uptime(),
     memory: process.memoryUsage(),
     environment: ENV.NODE_ENV,
     nodeVersion: process.version
-  });
+  };
+  responseUtils.success(res, healthData, 'Health check successful');
 });
 
 // API routes
@@ -57,13 +60,11 @@ app.use(errorHandler);
 
 // 404 handler
 app.use((req, res) => {
-  res.status(HTTP_STATUS.NOT_FOUND).json({ 
-    success: false,
-    error: 'Route not found',
+  const errorData = {
     path: req.originalUrl,
-    method: req.method,
-    timestamp: new Date().toISOString()
-  });
+    method: req.method
+  };
+  responseUtils.notFound(res, 'Route not found');
 });
 
 const PORT = ENV.PORT;
