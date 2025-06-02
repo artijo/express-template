@@ -1,0 +1,48 @@
+{
+  "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "node-fetch": "^3.3.2"
+  },
+  "name": "express-template",
+  "version": "1.0.0",
+  "main": "app.js",
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prisma": "^6.8.2"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:studio": "prisma studio",
+    "db:seed": "node prisma/seed.js",
+    "test": "node test-api.js",
+    "test:modules": "node examples/es6-examples.js",
+    "test:api": "node test-api.js",
+    "check:env": "node -e \"import('./examples/es6-examples.js').then(m => m.validateEnvironment())\"",
+    "check:db": "node -e \"import('./examples/es6-examples.js').then(m => m.testDatabaseConnection())\"",
+    "validate": "node --check app.js && echo \"ES6 modules syntax is valid\"",
+    "inspect": "node --inspect app.js",
+    "production": "NODE_ENV=production node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artijo/express-template.git"
+  },
+  "author": "artijo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/artijo/express-template/issues"
+  },
+  "homepage": "https://github.com/artijo/express-template#readme",
+  "description": ""
+}
