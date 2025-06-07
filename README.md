@@ -12,6 +12,7 @@ A modern Node.js Express API template with authentication, user management, and 
 - ✅ **Input Validation** - Express-validator integration
 - ✅ **Error Handling** - Centralized error management
 - ✅ **Response Utilities** - Consistent API responses
+- ✅ **Rate Limiting** - Express-rate-limit with configurable limits
 - ✅ **Security** - CORS, bcrypt password hashing
 - ✅ **Logging** - Morgan HTTP request logger
 - ✅ **Environment Configuration** - dotenv support
@@ -27,7 +28,8 @@ express-template/
 │   └── userController.js  # User management endpoints
 ├── middleware/            # Custom middleware
 │   ├── auth.js           # Authentication & authorization
-│   └── errorHandler.js   # Global error handling
+│   ├── errorHandler.js   # Global error handling
+│   └── rateLimiter.js    # Rate limiting middleware
 ├── routes/               # API routes
 │   ├── authRoutes.js     # Auth endpoints
 │   └── userRoutes.js     # User endpoints
@@ -37,6 +39,10 @@ express-template/
 ├── validators/           # Input validation
 │   ├── authValidator.js  # Auth validation rules
 │   └── userValidator.js  # User validation rules
+├── config/               # Configuration files
+│   └── rateLimitConfig.js # Rate limiting configuration
+├── docs/                 # Documentation
+│   └── RATE_LIMITING.md  # Rate limiting guide
 ├── utils/                # Utility functions
 │   ├── constants.js      # App constants
 │   └── response.js       # Response utilities
@@ -44,7 +50,8 @@ express-template/
 │   ├── schema.prisma     # Database schema
 │   ├── seed.js          # Database seeding
 │   └── index.js         # Prisma client
-└── test-api.js          # API testing script
+├── test-api.js          # API testing script
+└── test-rate-limit.js   # Rate limiting testing script
 ```
 
 ## Quick Start

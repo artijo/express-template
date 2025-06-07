@@ -9,6 +9,7 @@ import authRoutes from './routes/authRoutes.js';
 
 // Import middleware
 import errorHandler from './middleware/errorHandler.js';
+import rateLimiter from './middleware/rateLimiter.js';
 
 // Import constants
 import { ENV, API_ENDPOINTS, HTTP_STATUS } from './utils/constants.js';
@@ -25,6 +26,9 @@ app.use(cors());
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Apply general rate limiting to all routes
+app.use(rateLimiter.general);
 
 // Basic routes
 app.get('/', (req, res) => {
@@ -52,8 +56,8 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/auth', rateLimiter.auth, authRoutes);
+app.use('/api/users', rateLimiter.api, userRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

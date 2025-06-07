@@ -7,12 +7,13 @@ import {
   loginValidation,
 } from "../validators/userValidator.js";
 import { changePasswordValidation } from "../validators/authValidator.js";
+import { strictLimiter } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
 // Public routes
-router.post('/register', createUserValidation, authController.register);
-router.post('/login', loginValidation, authController.login);
+router.post('/register', strictLimiter, createUserValidation, authController.register);
+router.post('/login', strictLimiter, loginValidation, authController.login);
 router.post('/refresh-token', authController.refreshToken);
 
 // Protected routes (require authentication)
@@ -26,6 +27,7 @@ router.put(
 router.post(
   '/change-password',
   authenticateToken,
+  strictLimiter,
   changePasswordValidation,
   authController.changePassword,
 );
